@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Container,
@@ -21,49 +21,59 @@ import {
   TransactionCard,
   TransactionCardProps,
 } from "../../components/TransactionCard";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { dataKey } from "../Register";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export interface DataListProps extends TransactionCardProps {
   id: string;
 }
 
 export function Dashboard() {
-  const data: DataListProps[] = [
-    {
-      id: "1",
-      type: "positive",
-      title: "Desenvolvimento de site",
-      amount: "R$ 12.000,00",
-      category: { name: "Vendas", icon: "dollar-sign" },
-      date: "13/04/2020",
-    },
+  const [data, setData] = useState<DataListProps[]>([]);
 
-    {
-      id: "2",
-      type: "negative",
-      title: "Hamburgueria Pizzy",
-      amount: "R$ 59,00",
-      category: { name: "Alimentação", icon: "coffee" },
-      date: "10/04/2020",
-    },
+  async function loadTransactions() {
+    const response = await AsyncStorage.getItem(dataKey);
+    const transactions = response ? JSON.parse(response) : [];
 
-    {
-      id: "3",
-      type: "positive",
-      title: "Desenvolvimento de site",
-      amount: "R$ 12.000,00",
-      category: { name: "Vendas", icon: "shopping-bag" },
-      date: "13/04/2020",
-    },
+    const transactionsFormated: DataListProps[] = transactions.map(
+      (item: DataListProps) => {
+        const amount = Number(item.amount).toLocaleString("pt-AO", {
+          style: "currency",
+          currency: "AOA",
+        });
 
-    {
-      id: "4",
-      type: "negative",
-      title: "Aluguel do apartamento",
-      amount: "R$ 59,00",
-      category: { name: "Alimentação", icon: "dollar-sign" },
-      date: "10/04/2020",
-    },
-  ];
+        const date = Intl.DateTimeFormat("pt-AO", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        }).format(new Date(item.date));
+
+        return {
+          id: item.id,
+          name: item.name,
+          amount,
+          type: item.type,
+          category: item.category,
+          date,
+        };
+      }
+    );
+
+    setData(transactionsFormated);
+  }
+
+  useEffect(() => {
+    loadTransactions();
+    // AsyncStorage.removeItem(dataKey);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTransactions();
+    }, [])
+  );
 
   return (
     <Container>
