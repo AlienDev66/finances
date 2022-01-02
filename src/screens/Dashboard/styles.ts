@@ -86,3 +86,9 @@ export const TransactionList = styled(
   contentContainerStyle: { paddingBottom: getBottomSpace() },
 })``;
 export const LogoutButton = styled(BorderlessButton)``;
+
+export const LoadContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
