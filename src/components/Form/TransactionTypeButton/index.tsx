@@ -19,13 +19,9 @@ export const TransactionTypeButton = ({
   type,
   isActive,
   ...rest
-}: Props) => {
-  return (
-    <Container {...rest} isActive={isActive} type={type}>
-      <Icon type={type} name={icons[type]} />
-      <Title>{title}</Title>
-    </Container>
-  );
-};
-
-export default TransactionTypeButton;
+}: Props) => (
+  <Container {...rest} isActive={isActive} type={type}>
+    <Icon type={type} name={icons[type]} />
+    <Title>{title}</Title>
+  </Container>
+);
