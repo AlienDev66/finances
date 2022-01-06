@@ -20,6 +20,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from "react-native-uuid";
 import { useNavigation, CommonActions } from "@react-navigation/native";
+import { useAuth } from "../../hooks/auth";
 
 interface FormData {
   name: string;
@@ -33,7 +34,6 @@ const schema = Yup.object().shape({
     .positive("O valor não pode ser negativo.")
     .required("O valor é obrigatório"),
 });
-export const dataKey = "@gofinance:transactions";
 
 export function Register() {
   const [category, setCategory] = useState({
@@ -50,6 +50,8 @@ export function Register() {
     reset,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
+
+  const { user } = useAuth();
 
   function handleTransactionTypeSelect(type: "positive" | "negative") {
     setTransactionType(type);
@@ -82,6 +84,7 @@ export function Register() {
     };
 
     try {
+      const dataKey = `@gofinance:transactions_user:${user.id}`;
       const data = await AsyncStorage.getItem(dataKey);
       const currentData = data ? JSON.parse(data) : [];
       const dataFormated = [...currentData, newTransaction];
