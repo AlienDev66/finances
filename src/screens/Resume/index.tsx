@@ -16,7 +16,6 @@ import {
   MonthSelectIcon,
   Month,
 } from "./styles";
-import { dataKey } from "../Register";
 import { categories } from "../../utils/categories";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useTheme } from "styled-components";
@@ -24,6 +23,7 @@ import { addMonths, subMonths, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { LoadContainer } from "../Dashboard/styles";
 import { useFocusEffect } from "@react-navigation/native";
+import { useAuth } from "../../hooks/auth";
 
 interface TransactionData {
   type: "positive" | "negative";
@@ -49,6 +49,7 @@ export function Resume() {
     []
   );
   const theme = useTheme();
+  const { user } = useAuth();
 
   function handleDateChange(action: "next" | "prev") {
     if (action === "next") {
@@ -60,6 +61,7 @@ export function Resume() {
 
   async function loadData() {
     setIsloading(true);
+    const dataKey = `@gofinance:transactions_user:${user.id}`;
     const response = await AsyncStorage.getItem(dataKey);
     const responseFromatted = response ? JSON.parse(response) : [];
 

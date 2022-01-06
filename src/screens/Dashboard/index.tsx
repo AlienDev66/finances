@@ -23,9 +23,9 @@ import {
   TransactionCardProps,
 } from "../../components/TransactionCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { dataKey } from "../Register";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components";
+import { useAuth } from "../../hooks/auth";
 
 export interface DataListProps extends TransactionCardProps {
   id: string;
@@ -48,18 +48,26 @@ export function Dashboard() {
   const [highlightData, setHighlightData] = useState<HighlightDataProps>(
     {} as HighlightDataProps
   );
+  const { signOut, user } = useAuth();
   const theme = useTheme();
 
   function getLastTransactionData(
     collection: DataListProps[],
     type: "positive" | "negative"
   ) {
+    const collectionFiltered = collection.filter(
+      (transaction) => transaction.type === type
+    );
+
+    if (collectionFiltered.length === 0) {
+      return 0;
+    }
     const lastTransaction = new Date(
       Math.max.apply(
         Math,
-        collection
-          .filter((transaction) => transaction.type === type)
-          .map((transaction) => new Date(transaction.date).getTime())
+        collectionFiltered.map((transaction) =>
+          new Date(transaction.date).getTime()
+        )
       )
     );
 
@@ -69,6 +77,7 @@ export function Dashboard() {
     )}`;
   }
   async function loadTransactions() {
+    const dataKey = `@gofinance:transactions_user:${user.id}`;
     const response = await AsyncStorage.getItem(dataKey);
     const transactions = response ? JSON.parse(response) : [];
 
@@ -113,7 +122,11 @@ export function Dashboard() {
       transactions,
       "negative"
     );
-    const totalInterval = `01 a ${lastTransactionExpensives}`;
+
+    const totalInterval =
+      lastTransactionExpensives === 0
+        ? "Não há transações"
+        : `01 a ${lastTransactionExpensives}`;
 
     const total = entriesTotal - expensiveTotal;
     setHighlightData({
@@ -122,14 +135,20 @@ export function Dashboard() {
           style: "currency",
           currency: "AOA",
         }),
-        lastTransaction: lastTransactionEntries,
+        lastTransaction:
+          lastTransactionEntries === 0
+            ? "Não há transações"
+            : `Última saída dia ${lastTransactionEntries}`,
       },
       expansive: {
         amount: expensiveTotal.toLocaleString("pt-AO", {
           style: "currency",
           currency: "AOA",
         }),
-        lastTransaction: lastTransactionExpensives,
+        lastTransaction:
+          lastTransactionExpensives === 0
+            ? "Não há transações"
+            : `Última saída dia ${lastTransactionExpensives}`,
       },
       total: {
         amount: total.toLocaleString("pt-AO", {
@@ -165,13 +184,13 @@ export function Dashboard() {
           <Header>
             <UserWrapper>
               <UserInfo>
-                <Photo source={{ uri: "https://github.com/AlienDev66.png" }} />
+                <Photo source={{ uri: user.photo }} />
                 <User>
                   <UserGreeting>Olá, </UserGreeting>
-                  <UserName>Rodrigo</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <LogoutButton onPress={() => {}}>
+              <LogoutButton onPress={signOut}>
                 <Icon name="power" />
               </LogoutButton>
             </UserWrapper>
@@ -181,13 +200,13 @@ export function Dashboard() {
               type="up"
               title="Entrada"
               amount={highlightData?.entries?.amount}
-              lastTransaction={`Última entrada dia ${highlightData.entries.lastTransaction}`}
+              lastTransaction={highlightData.entries.lastTransaction}
             />
             <HighlightCard
               type="down"
               title="Saídas"
               amount={highlightData?.expansive?.amount}
-              lastTransaction={`Última saída dia ${highlightData.expansive.lastTransaction}`}
+              lastTransaction={highlightData.expansive.lastTransaction}
             />
             <HighlightCard
               type="total"
