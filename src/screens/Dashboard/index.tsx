@@ -16,6 +16,7 @@ import {
   TransactionList,
   LogoutButton,
   LoadContainer,
+  Cards,
 } from "./styles";
 import HighlightCard from "../../components/HighlightCard";
 import {
@@ -26,6 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components";
 import { useAuth } from "../../hooks/auth";
+import { ScrollView } from "react-native-gesture-handler";
 
 export interface DataListProps extends TransactionCardProps {
   id: string;
@@ -196,35 +198,42 @@ export function Dashboard() {
             </UserWrapper>
           </Header>
           <HighlightCards>
-            <HighlightCard
-              type="up"
-              title="Entrada"
-              amount={highlightData?.entries?.amount}
-              lastTransaction={highlightData.entries.lastTransaction}
-            />
-            <HighlightCard
-              type="down"
-              title="Saídas"
-              amount={highlightData?.expansive?.amount}
-              lastTransaction={highlightData.expansive.lastTransaction}
-            />
-            <HighlightCard
-              type="total"
-              title="Total"
-              amount={highlightData?.total?.amount}
-              lastTransaction={highlightData?.total?.lastTransaction}
-            />
+            <Cards>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 24 }}>
+                <HighlightCard
+                  type="up"
+                  title="Entrada"
+                  amount={highlightData?.entries?.amount}
+                  lastTransaction={highlightData.entries.lastTransaction}
+                />
+                <HighlightCard
+                  type="down"
+                  title="Saídas"
+                  amount={highlightData?.expansive?.amount}
+                  lastTransaction={highlightData.expansive.lastTransaction}
+                />
+                <HighlightCard
+                  type="total"
+                  title="Total"
+                  amount={highlightData?.total?.amount}
+                  lastTransaction={highlightData?.total?.lastTransaction}
+                />
+              </ScrollView>
+            </Cards>
+
+            <Transactions>
+              <TransactionList
+                data={transactions}
+                keyExtrator={(item: DataListProps) => item.id}
+                renderItem={({ item }: { item: DataListProps }) => (
+                  <TransactionCard data={item} />
+                )}
+              />
+            </Transactions>
           </HighlightCards>
-          <Transactions>
-            <Title>Listagem</Title>
-            <TransactionList
-              data={transactions}
-              keyExtrator={(item: DataListProps) => item.id}
-              renderItem={({ item }: { item: DataListProps }) => (
-                <TransactionCard data={item} />
-              )}
-            />
-          </Transactions>
         </>
       )}
     </Container>

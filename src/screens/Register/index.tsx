@@ -3,14 +3,7 @@ import { Keyboard, Modal, TouchableWithoutFeedback, Alert } from "react-native";
 import { Button } from "../../components/Form/Button";
 import { useForm } from "react-hook-form";
 
-import {
-  Container,
-  Header,
-  Title,
-  Form,
-  Fields,
-  TransactionsTypes,
-} from "./styles";
+import { Container, Form, Fields, TransactionsTypes } from "./styles";
 import { TransactionTypeButton } from "../../components/Form/TransactionTypeButton";
 import { CategorySelectButton } from "../../components/Form/CategorySelectButton";
 import { CategorySelect } from "../CategorySelect";
@@ -21,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from "react-native-uuid";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { useAuth } from "../../hooks/auth";
+import Header from "../../components/Header";
 
 interface FormData {
   name: string;
@@ -110,9 +104,7 @@ export function Register() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Container>
-        <Header>
-          <Title>Cadastro</Title>
-        </Header>
+        <Header title="Registo" />
         <Form>
           <Fields>
             <InputForm
@@ -121,7 +113,7 @@ export function Register() {
               placeholder="Nome"
               autoCapitalize="sentences"
               autoCorrect={false}
-              error={errors.name && errors.name.message}
+              error={errors?.name && errors?.name?.message}
             />
             <InputForm
               name="amount"
@@ -134,13 +126,11 @@ export function Register() {
             <TransactionsTypes>
               <TransactionTypeButton
                 isActive={transactionType === "positive"}
-                title="Income"
                 type="up"
                 onPress={() => handleTransactionTypeSelect("positive")}
               />
               <TransactionTypeButton
                 isActive={transactionType === "negative"}
-                title="Outcome"
                 type="down"
                 onPress={() => handleTransactionTypeSelect("negative")}
               />

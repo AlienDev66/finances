@@ -8,7 +8,6 @@ import { HistoryCard } from "../../components/HistoryCard";
 import {
   Container,
   Title,
-  Header,
   Content,
   ChartContainer,
   MonthSelect,
@@ -24,6 +23,7 @@ import { ptBR } from "date-fns/locale";
 import { LoadContainer } from "../Dashboard/styles";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../../hooks/auth";
+import Header from "../../components/Header";
 
 interface TransactionData {
   type: "positive" | "negative";
@@ -120,9 +120,7 @@ export function Resume() {
 
   return (
     <Container>
-      <Header>
-        <Title>Resumo por categoria</Title>
-      </Header>
+      <Header title="Resumo por categoria" />
       {isLoading ? (
         <LoadContainer>
           <ActivityIndicator color={theme.colors.secondary} size="large" />

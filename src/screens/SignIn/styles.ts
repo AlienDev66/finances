@@ -1,14 +1,20 @@
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { ImageBackgroundProps } from "react-native";
 import styled from "styled-components/native";
 
 export const Container = styled.View`
+  height: 100%;
+  background-color: ${({ theme }) => theme.colors.primary};
+`;
+export const Background = styled.ImageBackground<ImageBackgroundProps>`
   flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 `;
 export const Header = styled.View`
   width: 100%;
   height: 70%;
-
-  background-color: ${({ theme }) => theme.colors.primary};
 
   justify-content: flex-end;
   align-items: center;
@@ -34,11 +40,13 @@ export const SignInTitle = styled.Text`
 export const Footer = styled.View`
   width: 100%;
   height: 30%;
-  background-color: ${({ theme }) => theme.colors.secondary};
 `;
 export const FooterWrapper = styled.View`
+  width: 100%;
   margin-top: ${RFPercentage(-4)}px;
-  padding: 0 35px;
+  padding: 0 110px 0px;
 
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
 `;

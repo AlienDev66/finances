@@ -4,9 +4,11 @@ import { RFValue } from "react-native-responsive-fontsize";
 import AppleSvg from "../../assets/apple.svg";
 import GoogleSvg from "../../assets/google.svg";
 import LogoSvg from "../../assets/logo.svg";
+import BgImg from "../../assets/BG_IMG.png";
 import { SignInSocialButton } from "../../components/SignInSocialButton";
 import { useAuth } from "../../hooks/auth";
 import {
+  Background,
   Container,
   Header,
   TitleWrapper,
@@ -48,41 +50,43 @@ export function SignIn({}: SignInProps) {
 
   return (
     <Container>
-      <Header>
-        <TitleWrapper>
-          <LogoSvg width={RFValue(120)} height={RFValue(68)} />
-          <Title>
-            Controle suas{"\n"}finanças de forma{"\n"}muito simples
-          </Title>
-        </TitleWrapper>
+      <Background source={BgImg} resizeMode="cover">
+        <Header>
+          <TitleWrapper>
+            <LogoSvg width={RFValue(120)} height={RFValue(68)} />
+            <Title>
+              Controle da{"\n"}melhor forma{"\n"}as suas finanças
+            </Title>
+          </TitleWrapper>
 
-        <SignInTitle>Faça seu login com{"\n"}uma das contas abaixo</SignInTitle>
-      </Header>
+          <SignInTitle>
+            Faça seu login com{"\n"}uma das contas abaixo
+          </SignInTitle>
+        </Header>
 
-      <Footer>
-        <FooterWrapper>
-          <SignInSocialButton
-            title="Entrar com Google"
-            svg={GoogleSvg}
-            onPress={handleSignInWithGoogle}
-          />
-          {Platform.OS === "ios" && (
+        <Footer>
+          <FooterWrapper>
             <SignInSocialButton
-              title="Entrar com Apple"
-              svg={AppleSvg}
-              onPress={handleSignInWithApple}
+              svg={GoogleSvg}
+              onPress={handleSignInWithGoogle}
+            />
+            {Platform.OS === "ios" && (
+              <SignInSocialButton
+                svg={AppleSvg}
+                onPress={handleSignInWithApple}
+              />
+            )}
+          </FooterWrapper>
+
+          {isLoading && (
+            <ActivityIndicator
+              color={theme.colors.shape}
+              size="small"
+              style={{ marginTop: 14 }}
             />
           )}
-        </FooterWrapper>
-
-        {isLoading && (
-          <ActivityIndicator
-            color={theme.colors.shape}
-            size="small"
-            style={{ marginTop: 14 }}
-          />
-        )}
-      </Footer>
+        </Footer>
+      </Background>
     </Container>
   );
 }

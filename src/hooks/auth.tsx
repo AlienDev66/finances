@@ -7,8 +7,9 @@ import React, {
 } from "react";
 import * as AppleAuthentication from "expo-apple-authentication";
 
-const { CLIENT_ID } = process.env;
-const { REDIRECT_URI } = process.env;
+const CLIENT_ID =
+  "137318186043-su8jbvimb7lmbai8pr3t9cfbu6pkcrhu.apps.googleusercontent.com";
+const REDIRECT_URI = "https://auth.expo.io/@aliendev66/gofinances";
 
 import * as AuthSession from "expo-auth-session";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -86,6 +87,8 @@ function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (credential) {
+        console.log("CREDENCIAIS =======>>>>", credential);
+
         const name = credential.fullName!.givenName!;
         const photo = `https://ui-avatars.com/api/?name=${name}&length=1`;
 
